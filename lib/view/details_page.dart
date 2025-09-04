@@ -1,4 +1,5 @@
 import 'package:ai_inspection/view/upload_image.dart';
+import 'package:ai_inspection/widgets/bg_wrapper.dart';
 import 'package:flutter/material.dart';
 
 class DetailsPage extends StatelessWidget {
@@ -8,6 +9,7 @@ class DetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(10),
         child: ElevatedButton(
@@ -22,19 +24,21 @@ class DetailsPage extends StatelessWidget {
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0).copyWith(top: 0),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.55,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  PrimaryTextField(labelName: 'Full Name'),
-                  PrimaryTextField(labelName: 'Email Address'),
-                  PrimaryTextField(labelName: 'Mobile No.'),
-                  PrimaryTextField(labelName: 'Address', maxLines: 4),
-                ],
+        child: BackgroundImage(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0).copyWith(top: 0),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.55,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    PrimaryTextField(labelName: 'Full Name'),
+                    PrimaryTextField(labelName: 'Email Address'),
+                    PrimaryTextField(labelName: 'Mobile No.'),
+                    PrimaryTextField(labelName: 'Address', maxLines: 4),
+                  ],
+                ),
               ),
             ),
           ),

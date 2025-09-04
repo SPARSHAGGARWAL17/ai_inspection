@@ -1,5 +1,6 @@
 import 'package:ai_inspection/colors.dart';
 import 'package:ai_inspection/view/details_page.dart';
+import 'package:ai_inspection/widgets/bg_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -20,32 +21,27 @@ class LandingPage extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset('assets/person.jpeg'),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'Next-Gen Property\nInspection App',
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryColor,
+        child: BackgroundImage(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset('assets/person.jpeg'),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  'Next-Gen Property\nInspection App',
+                  style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primaryColor),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0).copyWith(top: 0),
-              child: Text(
-                'Streamlining Property Damage Assessments with Al & Cloud Integration',
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  color: AppColors.secondaryColor,
+              Padding(
+                padding: const EdgeInsets.all(20.0).copyWith(top: 0),
+                child: Text(
+                  'Streamlining Property Damage Assessments with Al & Cloud Integration',
+                  style: GoogleFonts.poppins(fontSize: 12, color: AppColors.secondaryColor),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
