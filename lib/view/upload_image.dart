@@ -29,7 +29,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
 
   @override
   void initState() {
-    bloc = FileUploadBloc(fileService: FirebaseUploadFileService());
+    bloc = FileUploadBloc(fileService: FirebaseUploadFileService(), userDetails: widget.userDetails);
     bloc.add(InitializeFileUpload(AppStaticData.uploadSections));
     super.initState();
   }

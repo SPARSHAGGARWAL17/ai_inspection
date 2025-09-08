@@ -1,16 +1,23 @@
+import 'dart:io';
+
 import 'package:ai_inspection/bloc/file_upload_bloc_events.dart';
 import 'package:ai_inspection/bloc/file_upload_bloc_state.dart';
 import 'package:ai_inspection/model/file_upload.dart';
+import 'package:ai_inspection/model/user_details.dart';
 import 'package:ai_inspection/services/firebase_upload_file_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
+import 'package:path_provider/path_provider.dart' as path;
 
 class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
   late Map<String, FileUploadSection> _sections;
   int _currentSectionIndex = 0;
   final FirebaseUploadFileService _fileService;
+  final UserDetails userDetails;
 
-  FileUploadBloc({required FirebaseUploadFileService fileService}) : _fileService = fileService, super(FileUploadEmptyState()) {
+  FileUploadBloc({required FirebaseUploadFileService fileService, required this.userDetails})
+    : _fileService = fileService,
+      super(FileUploadEmptyState()) {
     on<AddPhotoEvent>(_handleAddPhoto);
     on<RemovePhotoEvent>(_handleRemovePhoto);
     on<PrevPageEvent>(_handlePrevPage);
@@ -20,14 +27,18 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
   }
 
   void _handleSubmitFiles(SubmitFiles event, Emitter<FileUploadState> emit) async {
-    int totalFiles = _sections.values.fold(0, (sum, section) => sum + section.photos.length);
-    emit(FileUploadInProgress(currentFile: 1, totalFiles: totalFiles));
+    int totalFiles = _sections.values.fold(0, (sum, section) => sum + section.photos.length) + 1;
+    emit(FileUploadInProgress(currentFile: 0, totalFiles: totalFiles));
     final String jobId = 'job_${Uuid().v4()}-${DateTime.now().millisecondsSinceEpoch}';
+    final File userDetailsFile = await _generateTxtFile(userDetails, jobId);
     try {
+      String userDetailsPath = '$jobId/user_details.txt';
+      await _fileService.uploadFile(jobId, 'user_details.txt', userDetailsFile);
+      emit(FileUploadInProgress(currentFile: 1, totalFiles: totalFiles));
       for (var section in _sections.values) {
         for (var entry in section.photos.entries) {
-          String path = '$jobId/photos/${section.sectionId}/${entry.key}';
-          await _fileService.uploadFile(path, entry.value);
+          String path = '$jobId/photos/${section.sectionId}';
+          await _fileService.uploadFile(path, '${entry.key}.${entry.value.path.split('.').last}', entry.value);
           emit(
             FileUploadInProgress(
               currentFile: (state is FileUploadInProgress) ? (state as FileUploadInProgress).currentFile + 1 : 1,
@@ -41,6 +52,20 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
       return;
     }
     emit(FileUploadSuccess());
+  }
+
+  Future<File> _generateTxtFile(UserDetails userDetails, String jobId) async {
+    // Generate a .txt file with user details and job ID
+    String content =
+        'Job ID: $jobId\n'
+        'Name: ${userDetails.name}\n'
+        'Email: ${userDetails.email}\n'
+        'Phone: ${userDetails.mobileNo}\n'
+        'Address: ${userDetails.address}\n';
+    // Save this content to a .txt file and upload if needed
+    final directory = await path.getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/$jobId.txt');
+    return await file.writeAsString(content);
   }
 
   void _handleInitialize(InitializeFileUpload event, Emitter<FileUploadState> emit) {
@@ -96,7 +121,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
   }
 
   void _handleNextPage(NextPageEvent event, Emitter<FileUploadState> emit) {
-    final currentSection = _sections.values.elementAt(_currentSectionIndex);
+    final currentSection = state is FileUploadInitial ? (state as FileUploadInitial).section : _sections.values.elementAt(_currentSectionIndex);
     // if (currentSection.photos.isEmpty) {
     //   emit(ValidationError('Please add at least one photo to proceed.'));
     //   emit(

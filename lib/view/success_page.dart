@@ -8,30 +8,22 @@ class SuccessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xff363636),
-      bottomNavigationBar: Container(
-        child: ElevatedButton(
-          style: ButtonStyle(
-            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
-            backgroundColor: WidgetStatePropertyAll(Color(0xff56E19D)),
-          ),
-          onPressed: () {
-            Navigator.of(context).pushNamedAndRemoveUntil(DetailsPage.route, (
-              route,
-            ) {
-              return route.isFirst;
-            });
-          },
-          child: Text(
-            'Generate Another Report',
-            style: GoogleFonts.poppins(color: Color(0xff363636)),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: Color(0xff363636),
+        bottomNavigationBar: Container(
+          child: ElevatedButton(
+            style: ButtonStyle(shape: WidgetStatePropertyAll(RoundedRectangleBorder()), backgroundColor: WidgetStatePropertyAll(Color(0xff56E19D))),
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(DetailsPage.route, (route) {
+                return route.isFirst;
+              });
+            },
+            child: Text('Generate Another Report', style: GoogleFonts.poppins(color: Color(0xff363636))),
           ),
         ),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [Image.asset('assets/success.gif')],
+        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Image.asset('assets/success.gif')]),
       ),
     );
   }
