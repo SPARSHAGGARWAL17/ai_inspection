@@ -1,4 +1,4 @@
-package com.example.ai_inspection
+package com.crs.report
 
 import io.flutter.embedding.android.FlutterActivity
 

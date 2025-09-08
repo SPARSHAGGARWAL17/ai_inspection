@@ -1,10 +1,14 @@
 import 'package:ai_inspection/colors.dart';
+import 'package:ai_inspection/firebase_options.dart';
 import 'package:ai_inspection/routes.dart';
 import 'package:ai_inspection/view/landing_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -20,11 +24,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           elevation: 0,
           foregroundColor: AppColors.primaryColor,
-          titleTextStyle: GoogleFonts.poppins(
-            color: AppColors.primaryColor,
-            fontSize: 18,
-            fontWeight: FontWeight.w400,
-          ),
+          titleTextStyle: GoogleFonts.poppins(color: AppColors.primaryColor, fontSize: 18, fontWeight: FontWeight.w400),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -33,9 +33,7 @@ class MyApp extends StatelessWidget {
             backgroundColor: AppColors.primaryColor,
             minimumSize: const Size.fromHeight(50),
             elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           ),
         ),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),

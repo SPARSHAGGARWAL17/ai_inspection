@@ -1,3 +1,4 @@
+import 'package:ai_inspection/model/user_details.dart';
 import 'package:ai_inspection/view/details_page.dart';
 import 'package:ai_inspection/view/landing_page.dart';
 import 'package:ai_inspection/view/success_page.dart';
@@ -18,13 +19,11 @@ class RoutesGenerator {
       case fillDetails:
         page = DetailsPage();
       case uploadImages:
-        page = UploadImagePage();
+        page = UploadImagePage(userDetails: settings.arguments as UserDetails);
       case SuccessPage.route:
         page = SuccessPage();
       default:
-        page = Scaffold(
-          body: Center(child: Text('No route defined for ${settings.name}')),
-        );
+        page = Scaffold(body: Center(child: Text('No route defined for ${settings.name}')));
     }
     return MaterialPageRoute(builder: (_) => page);
   }

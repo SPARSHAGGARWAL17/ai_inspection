@@ -27,7 +27,17 @@ class FileUploadInitial extends FileUploadState {
   }
 }
 
-class FileUploadInProgress extends FileUploadState {}
+class ValidationError extends FileUploadState {
+  final String error;
+
+  ValidationError(this.error);
+}
+
+class FileUploadInProgress extends FileUploadState {
+  final int currentFile;
+  final int totalFiles;
+  FileUploadInProgress({this.currentFile = 0, this.totalFiles = 0});
+}
 
 class FileUploadSuccess extends FileUploadState {}
 

@@ -4,6 +4,9 @@ import 'package:ai_inspection/bloc/file_upload_bloc.dart';
 import 'package:ai_inspection/bloc/file_upload_bloc_events.dart';
 import 'package:ai_inspection/bloc/file_upload_bloc_state.dart';
 import 'package:ai_inspection/data.dart';
+import 'package:ai_inspection/model/user_details.dart';
+import 'package:ai_inspection/services/dialog_service.dart';
+import 'package:ai_inspection/services/firebase_upload_file_service.dart';
 import 'package:ai_inspection/view/success_page.dart';
 import 'package:ai_inspection/widgets/bg_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +16,9 @@ import 'package:image_picker/image_picker.dart';
 
 class UploadImagePage extends StatefulWidget {
   static const String route = '/upload-image';
-  const UploadImagePage({super.key});
+  final UserDetails userDetails;
+
+  const UploadImagePage({super.key, required this.userDetails});
 
   @override
   State<UploadImagePage> createState() => _UploadImagePageState();
@@ -24,28 +29,62 @@ class _UploadImagePageState extends State<UploadImagePage> {
 
   @override
   void initState() {
-    bloc = FileUploadBloc();
+    bloc = FileUploadBloc(fileService: FirebaseUploadFileService());
     bloc.add(InitializeFileUpload(AppStaticData.uploadSections));
     super.initState();
   }
 
   Future<void> showLoadingDialog() async {
-    return showDialog<void>(
+    return DialogService().showDialog(
       context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Center(child: CircularProgressIndicator()),
-                SizedBox(height: 20),
-                Center(child: Text('Uploading files, please wait...')),
-              ],
-            ),
+      widget: AlertDialog(
+        content: BlocProvider.value(
+          value: bloc,
+          child: BlocBuilder<FileUploadBloc, FileUploadState>(
+            builder: (context, state) {
+              if (state is FileUploadInProgress) {
+                return SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Center(child: Text('Uploading files, please wait...')),
+                      SizedBox(height: 20),
+                      Center(child: LinearProgressIndicator(value: (state.currentFile / state.totalFiles).clamp(0, 1))),
+                    ],
+                  ),
+                );
+              } else {
+                return SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Center(child: CircularProgressIndicator()),
+                      Center(child: Text('Uploading files, please wait...')),
+                      SizedBox(height: 20),
+                    ],
+                  ),
+                );
+              }
+            },
           ),
-        );
-      },
+        ),
+      ),
+    );
+  }
+
+  Future<void> showErrorDialog(String error) {
+    return DialogService().showDialog(
+      context: context, // barrierDismissible: false, // user must tap button!
+      widget: AlertDialog(
+        title: Text('Error'),
+        actions: [
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+        content: Text(error),
+      ),
     );
   }
 
@@ -61,10 +100,12 @@ class _UploadImagePageState extends State<UploadImagePage> {
             Navigator.of(context).pushNamed(SuccessPage.route);
           } else if (state is FileUploadInProgress) {
             showLoadingDialog();
+          } else if (state is ValidationError) {
+            showErrorDialog(state.error);
           }
         },
         buildWhen: (previous, current) {
-          if (current is FileUploadInProgress || current is FileUploadSuccess) {
+          if (current is FileUploadInProgress || current is FileUploadSuccess || current is ValidationError) {
             return false;
           }
           return true;

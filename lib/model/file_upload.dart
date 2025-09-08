@@ -4,11 +4,7 @@ class FileUploadSection {
   final String sectionId;
   final String sectionName;
   final int maxPhotoAllowed;
-  FileUploadSection({
-    required this.sectionId,
-    required this.sectionName,
-    required this.maxPhotoAllowed,
-  });
+  FileUploadSection({required this.sectionId, required this.sectionName, required this.maxPhotoAllowed});
 
   final Map<String, File> _photos = {};
 
@@ -28,5 +24,9 @@ class FileUploadSection {
 
   void removePhoto(String id) {
     _photos.remove(id);
+  }
+
+  void clearPhotos() {
+    _photos.clear();
   }
 }
