@@ -61,7 +61,10 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
         'Name: ${userDetails.name}\n'
         'Email: ${userDetails.email}\n'
         'Phone: ${userDetails.mobileNo}\n'
-        'Address: ${userDetails.address}\n';
+        'Address: ${userDetails.streetAddress}\n'
+        'City: ${userDetails.city}\n'
+        'State: ${userDetails.state}\n'
+        'Zip Code: ${userDetails.zipCode}\n';
     // Save this content to a .txt file and upload if needed
     final directory = await path.getApplicationDocumentsDirectory();
     final file = File('${directory.path}/$jobId.txt');

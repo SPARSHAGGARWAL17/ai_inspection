@@ -90,64 +90,65 @@ class _UploadImagePageState extends State<UploadImagePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: bloc,
-      child: BlocConsumer<FileUploadBloc, FileUploadState>(
-        listener: (context, state) {
-          if (state is FileUploadFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
-          } else if (state is FileUploadSuccess) {
-            Navigator.of(context).pushNamed(SuccessPage.route);
-          } else if (state is FileUploadInProgress) {
-            showLoadingDialog();
-          } else if (state is ValidationError) {
-            showErrorDialog(state.error);
-          }
-        },
-        buildWhen: (previous, current) {
-          if (current is FileUploadInProgress || current is FileUploadSuccess || current is ValidationError) {
-            return false;
-          }
-          return true;
-        },
-        builder: (context, state) {
-          if (state is FileUploadInitial) {
-            return Scaffold(
-              bottomNavigationBar: Container(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: state.prevSectionAvailable
-                            ? () {
-                                bloc.add(PrevPageEvent());
-                                return;
-                              }
-                            : null,
-                        child: Text('Prev'),
+    return SafeArea(
+      top: false,
+      child: BlocProvider.value(
+        value: bloc,
+        child: BlocConsumer<FileUploadBloc, FileUploadState>(
+          listener: (context, state) {
+            if (state is FileUploadFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
+            } else if (state is FileUploadSuccess) {
+              Navigator.of(context).pushNamed(SuccessPage.route);
+            } else if (state is FileUploadInProgress) {
+              showLoadingDialog();
+            } else if (state is ValidationError) {
+              showErrorDialog(state.error);
+            }
+          },
+          buildWhen: (previous, current) {
+            if (current is FileUploadInProgress || current is FileUploadSuccess || current is ValidationError) {
+              return false;
+            }
+            return true;
+          },
+          builder: (context, state) {
+            if (state is FileUploadInitial) {
+              return Scaffold(
+                bottomNavigationBar: Container(
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: state.prevSectionAvailable
+                              ? () {
+                                  bloc.add(PrevPageEvent());
+                                  return;
+                                }
+                              : null,
+                          child: Text('Prev'),
+                        ),
                       ),
-                    ),
-                    Expanded(flex: 2, child: SizedBox()),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (state.nextSectionAvailable) {
-                            bloc.add(NextPageEvent());
-                            return;
-                          } else {
-                            bloc.add(SubmitFiles());
-                          }
-                        },
-                        child: Text(state.nextSectionAvailable ? 'Next' : 'Submit'),
+                      Expanded(flex: 2, child: SizedBox()),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (state.nextSectionAvailable) {
+                              bloc.add(NextPageEvent());
+                              return;
+                            } else {
+                              bloc.add(SubmitFiles());
+                            }
+                          },
+                          child: Text(state.nextSectionAvailable ? 'Next' : 'Submit'),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              appBar: AppBar(title: Text('Upload Images')),
-              body: SafeArea(
-                child: BackgroundImage(
+                appBar: AppBar(title: Text('Upload Images')),
+                body: BackgroundImage(
                   child: Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,15 +194,15 @@ class _UploadImagePageState extends State<UploadImagePage> {
                     ),
                   ),
                 ),
-              ),
-            );
-          } else {
-            return Scaffold(
-              appBar: AppBar(title: Text('Upload Images')),
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-        },
+              );
+            } else {
+              return Scaffold(
+                appBar: AppBar(title: Text('Upload Images')),
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+          },
+        ),
       ),
     );
   }
