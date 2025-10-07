@@ -1,5 +1,6 @@
 // Events
-import 'dart:io';
+
+import 'dart:typed_data';
 
 import 'package:ai_inspection/model/file_upload.dart';
 
@@ -13,7 +14,7 @@ class InitializeFileUpload extends FileUploadEvent {
 
 class AddPhotoEvent extends FileUploadEvent {
   final String sectionId;
-  final File photo;
+  final Uint8List photo;
 
   AddPhotoEvent(this.sectionId, this.photo);
 }

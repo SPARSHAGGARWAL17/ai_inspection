@@ -13,6 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:typed_data';
+
+import 'package:image_picker_web/image_picker_web.dart';
 
 class UploadImagePage extends StatefulWidget {
   static const String route = '/upload-image';
@@ -169,7 +173,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
                               if (index == state.section.uploadedPhotos.length) {
                                 return InkWell(
                                   onTap: () async {
-                                    File? image = await pickPhoto();
+                                    Uint8List? image = await pickPhoto();
                                     if (image != null) {
                                       bloc.add(AddPhotoEvent(state.section.sectionId, image));
                                     }
@@ -181,11 +185,21 @@ class _UploadImagePageState extends State<UploadImagePage> {
                                   ),
                                 );
                               } else {
-                                return Container(
-                                  margin: EdgeInsets.all(5),
-                                  color: Colors.grey[300],
-                                  child: Image.file(state.section.uploadedPhotos[index], fit: BoxFit.cover),
-                                );
+                                if (kIsWeb) {
+                                  // Assume you store Uint8List for web
+                                  return Container(
+                                    margin: EdgeInsets.all(5),
+                                    color: Colors.grey[300],
+                                    child: Image.memory(state.section.uploadedPhotos[index], fit: BoxFit.cover),
+                                  );
+                                } else {
+                                  // Mobile/desktop: File
+                                  return Container(
+                                    margin: EdgeInsets.all(5),
+                                    color: Colors.grey[300],
+                                    child: Image.memory(state.section.uploadedPhotos[index], fit: BoxFit.cover),
+                                  );
+                                }
                               }
                             },
                           ),
@@ -207,11 +221,17 @@ class _UploadImagePageState extends State<UploadImagePage> {
     );
   }
 
-  Future<File?> pickPhoto() async {
+  Future<Uint8List?> pickPhoto() async {
+    if (kIsWeb) {
+      Uint8List? picker = await ImagePickerWeb.getImageAsBytes();
+      if (picker != null) {
+        return picker;
+      }
+    }
     ImagePicker picker = ImagePicker();
     XFile? image = await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     if (image != null) {
-      return File(image.path);
+      return await image.readAsBytes();
     }
     return null;
   }

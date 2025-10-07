@@ -1,15 +1,15 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseUploadFileService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  Future<String> uploadFile(String folderTimestamp, String fileName, File file) async {
+  Future<String> uploadFile(String folderTimestamp, String fileName, Uint8List file) async {
     try {
       // Create the full path: folderTimestamp/filename
       final fullPath = '$folderTimestamp/$fileName';
       final ref = _storage.ref().child(fullPath);
-      final uploadTask = await ref.putFile(file, SettableMetadata());
+      final uploadTask = await ref.putData(file, SettableMetadata());
       return await uploadTask.ref.getDownloadURL();
     } catch (e) {
       throw Exception('File upload failed: $e');
