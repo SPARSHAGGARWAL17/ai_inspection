@@ -35,12 +35,11 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
     final String jobId = 'job_${Uuid().v4()}-${DateTime.now().millisecondsSinceEpoch}';
     final Uint8List userDetailsFile = await _generateTxtFile(userDetails, jobId);
     try {
-      String userDetailsPath = '$jobId/user_details.txt';
-      await _fileService.uploadFile(userDetails.name, 'user_details.txt', userDetailsFile);
+      await _fileService.uploadFile(jobId, 'user_details.txt', userDetailsFile);
       emit(FileUploadInProgress(currentFile: 1, totalFiles: totalFiles));
       for (var section in _sections.values) {
         for (var entry in section.photos.entries) {
-          String path = '${userDetails.name}/photos/${section.sectionId}';
+          String path = '$jobId/raw_photos/${section.sectionId}';
           await _fileService.uploadFile(path, '${entry.key}.jpg', entry.value);
           emit(
             FileUploadInProgress(
@@ -50,6 +49,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
           );
         }
       }
+      await _fileService.uploadFile("$jobId/raw_photos", 'done.txt', Uint8List.fromList([]));
     } catch (e) {
       emit(FileUploadFailure('File upload failed: $e'));
       return;
