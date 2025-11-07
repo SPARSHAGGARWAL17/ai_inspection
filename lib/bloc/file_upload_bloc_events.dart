@@ -26,7 +26,10 @@ class RemovePhotoEvent extends FileUploadEvent {
   RemovePhotoEvent(this.sectionId, this.photoId);
 }
 
-class SubmitFiles extends FileUploadEvent {}
+class SubmitFiles extends FileUploadEvent {
+  final String note;
+  SubmitFiles({required this.note});
+}
 
 class PrevPageEvent extends FileUploadEvent {}
 

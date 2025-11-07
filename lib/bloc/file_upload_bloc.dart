@@ -30,16 +30,19 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
   }
 
   void _handleSubmitFiles(SubmitFiles event, Emitter<FileUploadState> emit) async {
-    int totalFiles = _sections.values.fold(0, (sum, section) => sum + section.photos.length) + 1;
+    int totalFiles = _sections.values.fold(0, (sum, section) => sum + section.photos.length) + 2;
     emit(FileUploadInProgress(currentFile: 0, totalFiles: totalFiles));
-    final String jobId = 'job_${Uuid().v4()}-${DateTime.now().millisecondsSinceEpoch}';
-    final Uint8List userDetailsFile = await _generateTxtFile(userDetails, jobId);
+    final String jobId = 'job_${userDetails.name}-${userDetails.streetAddress}-${DateTime.now().millisecondsSinceEpoch}';
+    final Uint8List userDetailsFile = await _generateTxtFile(userDetails: userDetails, jobId: jobId);
+    final Uint8List noteFiles = await _generateTxtFile(jobId: jobId, content: event.note);
     try {
       await _fileService.uploadFile(jobId, 'user_details.txt', userDetailsFile);
       emit(FileUploadInProgress(currentFile: 1, totalFiles: totalFiles));
+      await _fileService.uploadFile(jobId, 'note.txt', noteFiles);
+      emit(FileUploadInProgress(currentFile: 2, totalFiles: totalFiles));
       for (var section in _sections.values) {
         for (var entry in section.photos.entries) {
-          String path = '$jobId/raw_photos/${section.sectionId}';
+          String path = '$jobId/photos';
           await _fileService.uploadFile(path, '${entry.key}.jpg', entry.value);
           emit(
             FileUploadInProgress(
@@ -49,7 +52,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
           );
         }
       }
-      await _fileService.uploadFile("$jobId/raw_photos", 'done.txt', Uint8List.fromList([]));
+      await _fileService.uploadFile("$jobId/photos", 'done.txt', Uint8List.fromList([]));
     } catch (e) {
       emit(FileUploadFailure('File upload failed: $e'));
       return;
@@ -57,24 +60,29 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
     emit(FileUploadSuccess());
   }
 
-  Future<Uint8List> _generateTxtFile(UserDetails userDetails, String jobId) async {
+  Future<Uint8List> _generateTxtFile({String? content, UserDetails? userDetails, required String jobId}) async {
     // Generate a .txt file with user details and job ID
-    String content =
-        'Job ID: $jobId\n'
-        'Name: ${userDetails.name}\n'
-        'Email: ${userDetails.email}\n'
-        'Phone: ${userDetails.mobileNo}\n'
-        'Address: ${userDetails.streetAddress}\n'
-        'City: ${userDetails.city}\n'
-        'State: ${userDetails.state}\n'
-        'Zip Code: ${userDetails.zipCode}\n';
-    // Save this content to a .txt file and upload if needed
+    String _content = "";
+    if (content != null) {
+      _content = content;
+    } else if (userDetails != null) {
+      _content =
+          'Job ID: $jobId\n'
+          'Name: ${userDetails.name}\n'
+          'Email: ${userDetails.email}\n'
+          'Phone: ${userDetails.mobileNo}\n'
+          'Address: ${userDetails.streetAddress}\n'
+          'City: ${userDetails.city}\n'
+          'State: ${userDetails.state}\n'
+          'Zip Code: ${userDetails.zipCode}\n';
+      // Save this content to a .txt file and upload if needed
+    }
     if (kIsWeb) {
-      return Uint8List.fromList(utf8.encode(content));
+      return Uint8List.fromList(utf8.encode(_content));
     }
     final directory = await path.getApplicationDocumentsDirectory();
     final file = io.File('${directory.path}/$jobId.txt');
-    return await file.writeAsString(content).then((_) async => await file.readAsBytes());
+    return await file.writeAsString(_content).then((_) async => await file.readAsBytes());
   }
 
   void _handleInitialize(InitializeFileUpload event, Emitter<FileUploadState> emit) {

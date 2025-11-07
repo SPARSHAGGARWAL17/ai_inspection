@@ -7,6 +7,7 @@ import 'package:ai_inspection/data.dart';
 import 'package:ai_inspection/model/user_details.dart';
 import 'package:ai_inspection/services/dialog_service.dart';
 import 'package:ai_inspection/services/firebase_upload_file_service.dart';
+import 'package:ai_inspection/view/note_page.dart';
 import 'package:ai_inspection/view/success_page.dart';
 import 'package:ai_inspection/widgets/bg_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -38,78 +39,13 @@ class _UploadImagePageState extends State<UploadImagePage> {
     super.initState();
   }
 
-  Future<void> showLoadingDialog() async {
-    return DialogService().showDialog(
-      context: context,
-      widget: AlertDialog(
-        content: BlocProvider.value(
-          value: bloc,
-          child: BlocBuilder<FileUploadBloc, FileUploadState>(
-            builder: (context, state) {
-              if (state is FileUploadInProgress) {
-                return SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Center(child: Text('Uploading files, please wait...')),
-                      SizedBox(height: 20),
-                      Center(child: LinearProgressIndicator(value: (state.currentFile / state.totalFiles).clamp(0, 1))),
-                    ],
-                  ),
-                );
-              } else {
-                return SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Center(child: CircularProgressIndicator()),
-                      Center(child: Text('Uploading files, please wait...')),
-                      SizedBox(height: 20),
-                    ],
-                  ),
-                );
-              }
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> showErrorDialog(String error) {
-    return DialogService().showDialog(
-      context: context, // barrierDismissible: false, // user must tap button!
-      widget: AlertDialog(
-        title: Text('Error'),
-        actions: [
-          TextButton(
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-        content: Text(error),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: BlocProvider.value(
         value: bloc,
-        child: BlocConsumer<FileUploadBloc, FileUploadState>(
-          listener: (context, state) {
-            if (state is FileUploadFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
-            } else if (state is FileUploadSuccess) {
-              Navigator.of(context).pushNamed(SuccessPage.route);
-            } else if (state is FileUploadInProgress) {
-              showLoadingDialog();
-            } else if (state is ValidationError) {
-              showErrorDialog(state.error);
-            }
-          },
+        child: BlocBuilder<FileUploadBloc, FileUploadState>(
           buildWhen: (previous, current) {
             if (current is FileUploadInProgress || current is FileUploadSuccess || current is ValidationError) {
               return false;
@@ -142,7 +78,7 @@ class _UploadImagePageState extends State<UploadImagePage> {
                               bloc.add(NextPageEvent());
                               return;
                             } else {
-                              bloc.add(SubmitFiles());
+                              Navigator.of(context).pushNamed(NotePage.route, arguments: bloc);
                             }
                           },
                           child: Text(state.nextSectionAvailable ? 'Next' : 'Submit'),
