@@ -40,10 +40,12 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
       emit(FileUploadInProgress(currentFile: 1, totalFiles: totalFiles));
       await _fileService.uploadFile(jobId, 'note.txt', noteFiles);
       emit(FileUploadInProgress(currentFile: 2, totalFiles: totalFiles));
+      int imgSerial = 1;
       for (var section in _sections.values) {
         for (var entry in section.photos.entries) {
           String path = '$jobId/photos';
-          await _fileService.uploadFile(path, '${entry.key}.jpg', entry.value);
+          await _fileService.uploadFile(path, 'img_$imgSerial.jpg', entry.value);
+          imgSerial++;
           emit(
             FileUploadInProgress(
               currentFile: (state is FileUploadInProgress) ? (state as FileUploadInProgress).currentFile + 1 : 1,
