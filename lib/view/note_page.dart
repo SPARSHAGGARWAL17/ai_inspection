@@ -1,6 +1,7 @@
 import 'package:ai_inspection/bloc/file_upload_bloc.dart';
 import 'package:ai_inspection/bloc/file_upload_bloc_events.dart';
 import 'package:ai_inspection/bloc/file_upload_bloc_state.dart';
+import 'package:ai_inspection/model/note_details.dart';
 import 'package:ai_inspection/services/dialog_service.dart';
 import 'package:ai_inspection/view/success_page.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,29 @@ class NotePage extends StatefulWidget {
 
 class _NotePageState extends State<NotePage> {
   final TextEditingController noteController = TextEditingController();
+  final TextEditingController ownerController = TextEditingController();
+  final TextEditingController claimNoController = TextEditingController();
+  final TextEditingController inspectionController = TextEditingController();
+  final TextEditingController companyController = TextEditingController();
+
+  NoteDetails noteDetails = NoteDetails.empty();
+
   GlobalKey<FormState> formKey = GlobalKey();
+
+  @override
+  void initState() {
+    ownerController.text = widget.bloc.userDetails.name;
+    noteDetails = noteDetails.copyWith(owner: widget.bloc.userDetails.name);
+    super.initState();
+  }
 
   @override
   void dispose() {
     noteController.dispose();
+    ownerController.dispose();
+    claimNoController.dispose();
+    inspectionController.dispose();
+    companyController.dispose();
     super.dispose();
   }
 
@@ -87,7 +106,7 @@ class _NotePageState extends State<NotePage> {
       bottomNavigationBar: ElevatedButton(
         onPressed: () {
           if (formKey.currentState?.validate() == true) {
-            widget.bloc.add(SubmitFiles(note: noteController.text));
+            widget.bloc.add(SubmitFiles(note: noteDetails.toFormattedString()));
           }
         },
         child: Text("Submit"),
@@ -114,10 +133,57 @@ class _NotePageState extends State<NotePage> {
                 child: Column(
                   children: [
                     TextFormField(
+                      controller: inspectionController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter inspector name.';
+                        } else {
+                          noteDetails = noteDetails.copyWith(inspectedBy: value);
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(labelText: 'Inspected By', border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: companyController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter insurance company.';
+                        } else {
+                          noteDetails = noteDetails.copyWith(insuranceCompany: value);
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(labelText: 'Insurance Company', border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: claimNoController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter claim number.';
+                        } else {
+                          noteDetails = noteDetails.copyWith(claimNo: value);
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(labelText: 'Claim Number', border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: ownerController,
+                      enabled: false,
+                      decoration: InputDecoration(labelText: 'Home Owner', border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
                       controller: noteController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Enter note.';
+                        } else {
+                          noteDetails = noteDetails.copyWith(note: value);
                         }
                         return null;
                       },
