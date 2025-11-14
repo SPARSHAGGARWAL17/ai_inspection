@@ -1,6 +1,8 @@
+import 'package:ai_inspection/bloc/file_upload_bloc.dart';
 import 'package:ai_inspection/model/user_details.dart';
 import 'package:ai_inspection/view/details_page.dart';
 import 'package:ai_inspection/view/landing_page.dart';
+import 'package:ai_inspection/view/note_page.dart';
 import 'package:ai_inspection/view/success_page.dart';
 import 'package:ai_inspection/view/upload_image.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,10 @@ class RoutesGenerator {
         page = UploadImagePage(userDetails: settings.arguments as UserDetails);
       case SuccessPage.route:
         page = SuccessPage();
+      case NotePage.route:
+        page = NotePage(
+          bloc: settings.arguments as FileUploadBloc,
+        );
       default:
         page = Scaffold(body: Center(child: Text('No route defined for ${settings.name}')));
     }
