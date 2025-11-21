@@ -128,11 +128,11 @@ class _DetailsPageState extends State<DetailsPage> {
                           PrimaryTextField(
                             labelName: 'State',
                             onSaved: (val) {
-                              userDetails.city = val ?? '';
+                              userDetails.state = val ?? '';
                             },
                             validator: (val) {
                               if (val == null || val.isEmpty == true) {
-                                return 'Please enter your city';
+                                return 'Please enter your state';
                               }
                               return null;
                             },
