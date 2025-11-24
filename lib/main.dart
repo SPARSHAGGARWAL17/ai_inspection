@@ -40,6 +40,14 @@ class MyApp extends StatelessWidget {
       ),
       onGenerateRoute: RoutesGenerator.generateRoute,
       initialRoute: LandingPage.route,
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => Scaffold(
+            appBar: AppBar(title: Text('Error')),
+            body: Center(child: Text('No route defined for ${settings.name}')),
+          ),
+        );
+      },
     );
   }
 }
