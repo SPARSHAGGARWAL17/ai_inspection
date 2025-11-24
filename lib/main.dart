@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AI Inspection',
+      title: 'C.R.S. Non Profit',
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           elevation: 0,
