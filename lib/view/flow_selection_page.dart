@@ -40,7 +40,7 @@ class _FlowSelectionPageState extends State<FlowSelectionPage> {
       body: BackgroundImage(
         child: Center(
           child: GridView.builder(
-            padding: EdgeInsets.all(40),
+            padding: EdgeInsets.all(30),
             shrinkWrap: true,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -64,7 +64,8 @@ class _FlowSelectionPageState extends State<FlowSelectionPage> {
                   alignment: Alignment.center,
                   child: Text(
                     flows[index].name,
-                    style: GoogleFonts.poppins(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(fontSize: 20, color: Colors.black),
                   ),
                 ),
               );
@@ -141,7 +142,8 @@ class _GenerateReportButton extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               'Generate Report',
-              style: GoogleFonts.poppins(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w600),
+              style: GoogleFonts.poppins(fontSize: 20, color: Colors.black),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
