@@ -54,7 +54,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
           );
         }
       }
-      await _fileService.uploadFile("$jobId/photos", 'done.txt', Uint8List.fromList([]));
+      await _fileService.uploadFile(jobId, 'done.txt', Uint8List.fromList([]));
     } catch (e) {
       emit(FileUploadFailure('File upload failed: $e'));
       return;
