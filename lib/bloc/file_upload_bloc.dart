@@ -101,7 +101,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
   void _handleAddPhoto(AddPhotoEvent event, Emitter<FileUploadState> emit) {
     final FileUploadSection? section = _sections[event.sectionId];
     if (section != null) {
-      String photoId = '${section.sectionId}_photo_${section.photos.length + 1}';
+      String photoId = '${section.sectionId}_photo_${Uuid().v4()}';
       section.uploadPhoto(photoId, event.photo);
       emit(
         FileUploadInitial(

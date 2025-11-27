@@ -104,9 +104,9 @@ class _UploadImagePageState extends State<UploadImagePage> {
                           child: GridView.builder(
                             padding: EdgeInsets.all(10),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-                            itemCount: state.section.uploadedPhotos.length + 1,
+                            itemCount: state.section.photos.length + 1,
                             itemBuilder: (context, index) {
-                              if (index == state.section.uploadedPhotos.length) {
+                              if (index == state.section.photos.length) {
                                 return InkWell(
                                   onTap: () async {
                                     Uint8List? image = await pickPhoto();
@@ -123,17 +123,30 @@ class _UploadImagePageState extends State<UploadImagePage> {
                               } else {
                                 if (kIsWeb) {
                                   // Assume you store Uint8List for web
-                                  return Container(
-                                    margin: EdgeInsets.all(5),
-                                    color: Colors.grey[300],
-                                    child: Image.memory(state.section.uploadedPhotos[index], fit: BoxFit.cover),
+                                  return Stack(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.all(5),
+                                        color: Colors.grey[300],
+                                        child: Image.memory(state.section.photos.entries.elementAt(index).value, fit: BoxFit.cover),
+                                      ),
+                                      Positioned(
+                                        right: 0,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            bloc.add(RemovePhotoEvent(state.section.sectionId, state.section.photos.keys.elementAt(index)));
+                                          },
+                                          icon: Icon(Icons.delete, color: Colors.red),
+                                        ),
+                                      ),
+                                    ],
                                   );
                                 } else {
                                   // Mobile/desktop: File
                                   return Container(
                                     margin: EdgeInsets.all(5),
                                     color: Colors.grey[300],
-                                    child: Image.memory(state.section.uploadedPhotos[index], fit: BoxFit.cover),
+                                    child: Image.memory(state.section.photos.entries.elementAt(index).value, fit: BoxFit.cover),
                                   );
                                 }
                               }
