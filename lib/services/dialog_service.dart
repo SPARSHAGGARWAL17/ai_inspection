@@ -8,10 +8,7 @@ class DialogService {
 
   Widget? _currentDialog;
 
-  Future<void> showDialog({
-    required BuildContext context,
-    required Widget widget,
-  }) async {
+  Future<void> showDialog({required BuildContext context, required Widget widget}) async {
     if (_currentDialog != null) {
       // A dialog is already being shown
       return;
@@ -32,6 +29,7 @@ class DialogService {
     if (_currentDialog != null) {
       Navigator.of(context, rootNavigator: true).pop();
       _currentDialog = null;
+      await Future.delayed(const Duration(milliseconds: 600));
     }
   }
 }

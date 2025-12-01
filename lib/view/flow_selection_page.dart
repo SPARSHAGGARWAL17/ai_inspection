@@ -88,14 +88,14 @@ class _GenerateReportButton extends StatelessWidget {
     return BlocProvider.value(
       value: _bloc,
       child: BlocListener<GenerateReportBloc, GenerateReportState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is GenerateReportInProgress) {
             DialogService().showDialog(
               context: context,
               widget: AlertDialog(content: Row(children: [CircularProgressIndicator(), SizedBox(width: 20), Text('Generating Report...')])),
             );
           } else {
-            DialogService().hideDialog(context);
+            await DialogService().hideDialog(context);
           }
           if (state is GenerateReportSuccess) {
             // Show success message
