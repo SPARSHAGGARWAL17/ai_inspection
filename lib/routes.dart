@@ -1,6 +1,7 @@
 import 'package:ai_inspection/bloc/file_upload_bloc.dart';
 import 'package:ai_inspection/model/user_details.dart';
 import 'package:ai_inspection/view/details_page.dart';
+import 'package:ai_inspection/view/flow_selection_page.dart';
 import 'package:ai_inspection/view/landing_page.dart';
 import 'package:ai_inspection/view/note_page.dart';
 import 'package:ai_inspection/view/success_page.dart';
@@ -28,6 +29,8 @@ class RoutesGenerator {
         page = NotePage(
           bloc: settings.arguments as FileUploadBloc,
         );
+      case FlowSelectionPage.route:
+        page = FlowSelectionPage();
       default:
         page = Scaffold(body: Center(child: Text('No route defined for ${settings.name}')));
     }

@@ -1,5 +1,6 @@
 import 'package:ai_inspection/colors.dart';
 import 'package:ai_inspection/view/details_page.dart';
+import 'package:ai_inspection/view/flow_selection_page.dart';
 import 'package:ai_inspection/widgets/bg_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,7 +28,7 @@ class _LandingPageState extends State<LandingPage> {
               child: ElevatedButton(
                 onPressed: termsAccepted
                     ? () {
-                        Navigator.of(context).pushNamed(DetailsPage.route);
+                        Navigator.of(context).pushNamed(FlowSelectionPage.route);
                       }
                     : null,
                 child: Text('Get Started'),
