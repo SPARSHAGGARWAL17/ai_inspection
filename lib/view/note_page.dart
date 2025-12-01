@@ -19,6 +19,7 @@ class NotePage extends StatefulWidget {
 class _NotePageState extends State<NotePage> {
   final TextEditingController noteController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey();
+  ValueNotifier<bool> submitButtonEnabled = ValueNotifier(false);
 
   @override
   void dispose() {
@@ -84,13 +85,20 @@ class _NotePageState extends State<NotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Write note")),
-      bottomNavigationBar: ElevatedButton(
-        onPressed: () {
-          if (formKey.currentState?.validate() == true) {
-            widget.bloc.add(SubmitFiles(note: noteController.text));
-          }
+      bottomNavigationBar: ValueListenableBuilder<bool>(
+        valueListenable: submitButtonEnabled,
+        builder: (context, value, child) {
+          return ElevatedButton(
+            onPressed: !value
+                ? null
+                : () {
+                    if (formKey.currentState?.validate() == true) {
+                      widget.bloc.add(SubmitFiles(note: noteController.text));
+                    }
+                  },
+            child: Text("Submit"),
+          );
         },
-        child: Text("Submit"),
       ),
       body: BlocProvider.value(
         value: widget.bloc,
@@ -115,6 +123,9 @@ class _NotePageState extends State<NotePage> {
                   children: [
                     TextFormField(
                       controller: noteController,
+                      onChanged: (value) {
+                        submitButtonEnabled.value = value.isNotEmpty;
+                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Enter note.';
