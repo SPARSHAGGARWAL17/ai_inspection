@@ -1,14 +1,10 @@
-import 'dart:io';
-
 import 'package:ai_inspection/bloc/file_upload_bloc.dart';
 import 'package:ai_inspection/bloc/file_upload_bloc_events.dart';
 import 'package:ai_inspection/bloc/file_upload_bloc_state.dart';
 import 'package:ai_inspection/data.dart';
 import 'package:ai_inspection/model/user_details.dart';
-import 'package:ai_inspection/services/dialog_service.dart';
 import 'package:ai_inspection/services/firebase_upload_file_service.dart';
 import 'package:ai_inspection/view/note_page.dart';
-import 'package:ai_inspection/view/success_page.dart';
 import 'package:ai_inspection/widgets/bg_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
 
-import 'package:image_picker_web/image_picker_web.dart';
+import 'package:image_picker_web/image_picker_web.dart' if (dart.library.io) 'stub_image_picker_web.dart';
 
 class UploadImagePage extends StatefulWidget {
   static const String route = '/upload-image';
@@ -143,10 +139,24 @@ class _UploadImagePageState extends State<UploadImagePage> {
                                   );
                                 } else {
                                   // Mobile/desktop: File
-                                  return Container(
-                                    margin: EdgeInsets.all(5),
-                                    color: Colors.grey[300],
-                                    child: Image.memory(state.section.photos.entries.elementAt(index).value, fit: BoxFit.cover),
+                                  return Stack(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        margin: EdgeInsets.all(5),
+                                        color: Colors.grey[300],
+                                        child: Image.memory(state.section.photos.entries.elementAt(index).value, fit: BoxFit.cover),
+                                      ),
+                                      Positioned(
+                                        right: 0,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            bloc.add(RemovePhotoEvent(state.section.sectionId, state.section.photos.keys.elementAt(index)));
+                                          },
+                                          icon: Icon(Icons.delete, color: Colors.red),
+                                        ),
+                                      ),
+                                    ],
                                   );
                                 }
                               }

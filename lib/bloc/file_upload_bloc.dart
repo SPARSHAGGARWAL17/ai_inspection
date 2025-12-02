@@ -54,8 +54,10 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
           );
         }
       }
-      await Future.delayed(const Duration(minutes: 1));
-      await _fileService.uploadFile(jobId, 'done.txt', Uint8List.fromList([]));
+      Future.delayed(const Duration(seconds: 30)).then((_) async {
+
+        await _fileService.uploadFile(jobId, 'done.txt', Uint8List.fromList([]));
+      });
     } catch (e) {
       emit(FileUploadFailure('File upload failed: $e'));
       return;
