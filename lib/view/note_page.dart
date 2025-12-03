@@ -138,70 +138,72 @@ class _NotePageState extends State<NotePage> {
               key: formKey,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: inspectionController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter inspector name.';
-                        } else {
-                          noteDetails = noteDetails.copyWith(inspectedBy: value);
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(labelText: 'Inspected By', border: OutlineInputBorder()),
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: companyController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter insurance company.';
-                        } else {
-                          noteDetails = noteDetails.copyWith(insuranceCompany: value);
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(labelText: 'Insurance Company', border: OutlineInputBorder()),
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: claimNoController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter claim number.';
-                        } else {
-                          noteDetails = noteDetails.copyWith(claimNo: value);
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(labelText: 'Claim Number', border: OutlineInputBorder()),
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: ownerController,
-                      enabled: false,
-                      decoration: InputDecoration(labelText: 'Home Owner', border: OutlineInputBorder()),
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: noteController,
-                      onChanged: (value) {
-                        submitButtonEnabled.value = value.isNotEmpty;
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter note.';
-                        } else {
-                          noteDetails = noteDetails.copyWith(note: value);
-                        }
-                        return null;
-                      },
-                      maxLines: 4,
-                      decoration: InputDecoration(hintText: 'Write note', border: OutlineInputBorder()),
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: inspectionController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter inspector name.';
+                          } else {
+                            noteDetails = noteDetails.copyWith(inspectedBy: value);
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(labelText: 'Inspected By', border: OutlineInputBorder()),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: companyController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter insurance company.';
+                          } else {
+                            noteDetails = noteDetails.copyWith(insuranceCompany: value);
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(labelText: 'Insurance Company', border: OutlineInputBorder()),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: claimNoController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter claim number.';
+                          } else {
+                            noteDetails = noteDetails.copyWith(claimNo: value);
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(labelText: 'Claim Number', border: OutlineInputBorder()),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: ownerController,
+                        enabled: false,
+                        decoration: InputDecoration(labelText: 'Home Owner', border: OutlineInputBorder()),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: noteController,
+                        onChanged: (value) {
+                          submitButtonEnabled.value = value.isNotEmpty;
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter note.';
+                          } else {
+                            noteDetails = noteDetails.copyWith(note: value);
+                          }
+                          return null;
+                        },
+                        maxLines: 4,
+                        decoration: InputDecoration(hintText: 'Write note', border: OutlineInputBorder()),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
