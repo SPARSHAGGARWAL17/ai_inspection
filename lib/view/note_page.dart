@@ -112,7 +112,7 @@ class _NotePageState extends State<NotePage> {
                 ? null
                 : () {
                     if (formKey.currentState?.validate() == true) {
-                      widget.bloc.add(SubmitFiles(note: noteController.text));
+                      widget.bloc.add(SubmitFiles(note: noteDetails.toFormattedString()));
                     }
                   },
             child: Text("Submit"),
